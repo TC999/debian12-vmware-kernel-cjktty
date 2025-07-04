@@ -27,7 +27,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      - name: 启用源码原
+      - name: 启用源码源
         run: sudo mv sources.list /etc/apt/sources.list
 
       - name: 安装依赖
