@@ -35,13 +35,13 @@ jobs:
           path: linux
 
       - name: add deb-src to sources.list
-        run: sed -i "/deb-src/s/# //g" /etc/apt/sources.list
+        run: sudo sed -i "/deb-src/s/# //g" /etc/apt/sources.list
 
       - name: 安装依赖
         run: |
-         apt update
-         apt install -y wget xz-utils make gcc flex bison dpkg-dev bc rsync kmod cpio libssl-dev language-pack-zh-hans
-         apt build-dep -y linux
+          sudo apt update
+          sudo apt install -y wget xz-utils make gcc flex bison dpkg-dev bc rsync kmod cpio libssl-dev language-pack-zh-hans
+          sudo apt build-dep -y linux
       
       - name: 移动配置文件
         run: cp config linux/.config
