@@ -19,7 +19,6 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container: debian:bookworm
     env:
       LANG: zh_CN.UTF-8
 
@@ -35,8 +34,8 @@ jobs:
           ref: v6.1
           path: linux
 
-      - name: add deb-src to sources.list
-        run: sudo sed -i "/deb-src/s/# //g" /etc/apt/sources.list
+      #- name: add deb-src to sources.list
+      #  run: sudo sed -i "/deb-src/s/# //g" /etc/apt/sources.list
 
       - name: 安装依赖
         run: |
