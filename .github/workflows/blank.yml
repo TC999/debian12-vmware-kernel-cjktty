@@ -38,7 +38,7 @@ jobs:
       - name: 安装依赖
         run: |
           sudo apt update
-          sudo apt install -y install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
+          sudo apt install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
 
       - name: 下载 linux 内核源码
         uses: actions/checkout@v4
