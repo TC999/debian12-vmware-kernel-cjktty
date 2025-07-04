@@ -9,20 +9,20 @@
 # See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
 # newer versions of the distribution.
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy main restricted
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy main restricted
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy main restricted
 
 ## Major bug fix updates produced after the final release of the
 ## distribution.
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-updates main restricted
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-updates main restricted
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-updates main restricted
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team. Also, please note that software in universe WILL NOT receive any
 ## review or updates from the Ubuntu security team.
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy universe
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy universe
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy universe
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-updates universe
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-updates universe
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-updates universe
 
 ## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu
 ## team, and may not be under a free licence. Please satisfy yourself as to
@@ -30,9 +30,9 @@ deb mirror+file:/etc/apt/apt-mirrors.txt jammy-updates universe
 ## multiverse WILL NOT receive any review or updates from the Ubuntu
 ## security team.
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy multiverse
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy multiverse
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy multiverse
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-updates multiverse
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-updates multiverse
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-updates multiverse
 
 ## N.B. software from this repository may not have been tested as
 ## extensively as that contained in the main release, although it includes
@@ -40,11 +40,11 @@ deb mirror+file:/etc/apt/apt-mirrors.txt jammy-updates multiverse
 ## Also, please note that software in backports WILL NOT receive any review
 ## or updates from the Ubuntu security team.
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-backports main restricted universe multiverse
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-backports main restricted universe multiverse
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-backports main restricted universe multiverse
 
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-security main restricted
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-security main restricted
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-security main restricted
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-security universe
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-security universe
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-security universe
 deb mirror+file:/etc/apt/apt-mirrors.txt jammy-security multiverse
-# deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-security multiverse
+deb-src mirror+file:/etc/apt/apt-mirrors.txt jammy-security multiverse
