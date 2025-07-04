@@ -29,11 +29,9 @@ jobs:
         run: |
           sudo cp /etc/apt/sources.list sources.list
 
-      - name: 查看文件
-        run: watch sources.list
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: 提交
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          git config --global user.email "actions@github.com"
+          git config --global user.name "actions-bot"
+          git commit -m "更新源文件"
+          git push
