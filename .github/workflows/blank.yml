@@ -27,21 +27,21 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      - name: 下载 linux 内核源码
-        uses: actions/checkout@v4
-        with:
-          repository: torvalds/linux
-          ref: v6.1
-          path: linux
-
-      #- name: add deb-src to sources.list
-      #  run: sudo sed -i "/deb-src/s/# //g" /etc/apt/sources.list
+      - name: 启用源码原
+        run: sudo mv sources.list /etc/apt/sources.list
 
       - name: 安装依赖
         run: |
           sudo apt update
           sudo apt install -y wget xz-utils make gcc flex bison dpkg-dev bc rsync kmod cpio libssl-dev language-pack-zh-hans
           sudo apt build-dep -y linux
+
+      - name: 下载 linux 内核源码
+        uses: actions/checkout@v4
+        with:
+          repository: torvalds/linux
+          ref: v6.1
+          path: linux
       
       - name: 移动配置文件
         run: cp config linux/.config
