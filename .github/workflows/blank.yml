@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       LANG: zh_CN.UTF-8
+      LANGUAGE: zh_CN:zh
+      LC_ALL: zh_CN.UTF-8
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -39,6 +41,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
+          sudo apt-get build-dep linux
 
       - name: 下载 linux 内核源码
         uses: actions/checkout@v4
@@ -59,8 +62,7 @@ jobs:
       - name: 编译
         run: |
           cd linux
-          CPU_CORES=$(($(grep -c processor < /proc/cpuinfo)*2))
-          make deb-pkg -j"$CPU_CORES"
+          make -j$(nproc) deb-pkg
 
       - name: 移动
         run: mv *.deb build/*.deb
