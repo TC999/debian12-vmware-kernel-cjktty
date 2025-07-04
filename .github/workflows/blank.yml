@@ -38,6 +38,7 @@ jobs:
           sudo apt-get install -y language-pack-zh-hans
 
       - name: 安装依赖
+        continue-on-error: ture
         run: |
           sudo apt update
           sudo apt install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
