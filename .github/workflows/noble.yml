@@ -54,7 +54,8 @@ jobs:
       - name: 编译
         run: |
           cd linux
-          make -j$(nproc) deb-pkg
+          export ARCH=x86
+          make -j$(nproc) deb-pkg -d
 
       - name: 上传
         uses: actions/upload-artifact@v4
