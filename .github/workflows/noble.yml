@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       LANG: zh_CN.UTF-8
       LANGUAGE: zh_CN:zh
@@ -12,6 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: 启用源码源
+        run: sudo mv sources.list /etc/apt/sources.list
 
       - name: 汉化
         run: |
