@@ -1,0 +1,61 @@
+name: Ubuntu 25.04
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      LANG: zh_CN.UTF-8
+      LANGUAGE: zh_CN:zh
+      LC_ALL: zh_CN.UTF-8
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 汉化
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y language-pack-zh-hans
+      
+      - name: 清理空间
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: 安装依赖
+        continue-on-error: true
+        run: |
+          sudo apt update
+          sudo apt install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
+          sudo apt-get build-dep linux
+
+      - name: 解决依赖冲突
+        run: |
+          sudo apt-get remove -y libunwind-dev || true
+          sudo apt-get update
+          sudo apt-get install -y libunwind-14-dev
+
+      - name: 下载内核源码
+        run: |
+          git clone https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble linux
+
+      - name: 打中文补丁
+        run: |
+          cd linux
+          wget https://raw.githubusercontent.com/andot/cjktty-patches/refs/heads/master/v6.x/cjktty-6.8.patch
+          patch -Np1 < cjktty*.patch
+
+      - name: 移动配置文件
+        run: |
+          mv noble-config linux/.config
+
+      - name: 编译
+        run: |
+          cd linux
+          make -j$(nproc) deb-pkg
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-noble-cjktty
+          path: |
+            *.deb
