@@ -39,9 +39,10 @@ jobs:
 
       - name: 安装编译依赖
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential libncurses-dev bison flex libssl-dev libelf-dev
-
+          sudo apt update
+          sudo apt build-dep linux linux-image-unsigned-$(uname -r)
+          sudo apt install fakeroot llvm libncurses-dev dwarves gawk flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf git
+      
       - name: 下载内核源码
         run: |
           git clone https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble linux
@@ -59,8 +60,11 @@ jobs:
       - name: 编译
         run: |
           cd linux
-          export ARCH=x86
-          make -j$(nproc) deb-pkg -d
+          chmod a+x debian/rules
+          chmod a+x debian/scripts/*
+          chmod a+x debian/scripts/misc/*
+          fakeroot debian/rules clean
+          fakeroot debian/rules binary
 
       - name: 上传
         uses: actions/upload-artifact@v4
