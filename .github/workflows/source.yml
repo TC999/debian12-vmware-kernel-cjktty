@@ -27,7 +27,8 @@ jobs:
 
       - name: 获取配置文件
         run: |
-          sudo cp /etc/apt/sources.list sources.list
+          #sudo cp /etc/apt/sources.list sources.list
+          sudo cp /etc/apt/sources.list.d/ubuntu.sources ubuntu.source
 
       - name: 提交
         run: |
