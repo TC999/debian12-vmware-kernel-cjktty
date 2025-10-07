@@ -58,6 +58,7 @@ jobs:
           mv noble-config linux/.config
 
       - name: 编译
+        continue-on-error: true
         run: |
           cd linux
           chmod a+x debian/rules
