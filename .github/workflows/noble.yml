@@ -52,7 +52,7 @@ jobs:
       
       - name: 下载内核源码
         run: |
-          git clone https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble linux
+          git clone https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble linux --depth=1
 
       - name: 打中文补丁
         run: |
