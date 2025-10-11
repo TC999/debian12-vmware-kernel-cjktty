@@ -1,0 +1,81 @@
+name: 编译内核 6.16.11 (含中文支持)
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  #push:
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+    env:
+      LANG: zh_CN.UTF-8
+      LANGUAGE: zh_CN:zh
+      LC_ALL: zh_CN.UTF-8
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: 启用源码源
+        run: sudo mv sources.list /etc/apt/sources.list
+
+      - name: 汉化
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y language-pack-zh-hans
+
+      - name: 清理空间
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: 安装依赖
+        continue-on-error: true
+        run: |
+          sudo apt update
+          sudo apt install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
+          sudo apt-get build-dep linux
+
+      - name: 解决依赖冲突
+        run: |
+          sudo apt-get remove -y libunwind-dev || true
+          sudo apt-get update
+          sudo apt-get install -y libunwind-14-dev
+
+      - name: 下载 linux 内核源码
+        run: |
+          git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1 --single-branch -b linux-6.16.y
+      
+      - name: 移动配置文件
+        run: cp 616-config linux/.config
+
+      - name: 中文补丁
+        run: |
+          cd linux
+          wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-6.16.patch
+          patch -Np1 < ./cjktty-6.16.patch
+
+      - name: 编译
+        run: |
+          cd linux
+          export ARCH=x86_64
+          make -j$(nproc) deb-pkg
+
+      #- name: 移动
+      #  run: mv *.deb build/*.deb
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian12-vmware-linux-cjktty
+          path: |
+            *.deb
