@@ -10,6 +10,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      clean:
+        description: '是否清理'
+        required: true
+        type: boolean
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,13 +41,14 @@ jobs:
           sudo apt-get install -y language-pack-zh-hans
 
       - name: 清理空间
+        if: ${{ inputs.clean }}
         uses: rokibhasansagar/slimhub_actions@main
 
       - name: 安装依赖
         continue-on-error: true
         run: |
           sudo apt update
-          sudo apt-get install build-essential libncurses-dev xz-utils libssl-dev flex libelf-dev bison fakeroot debhelper-compat=12 libdw-dev
+          sudo apt-get install build-essential libncurses-dev xz-utils libssl-dev flex libelf-dev bison fakeroot debhelper-compat=12 libdw-dev bc ccache
 
       - name: 下载 linux 内核源码
         run: |
