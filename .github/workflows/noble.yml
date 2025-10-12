@@ -37,18 +37,19 @@ jobs:
       #    sudo apt-get update
       #    sudo apt-get install -y libunwind-14-dev
 
+      - name: 解决依赖冲突
+        continue-on-error: true
+        run: |
+          sudo apt-get remove -y libunwind-dev || true
+          sudo apt-get update
+          sudo apt-get install -y libunwind-14-dev
+
       - name: 安装编译依赖
         continue-on-error: true
         run: |
           sudo apt update
           sudo apt install fakeroot llvm libncurses-dev dwarves gawk flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf git debhelper
           sudo apt build-dep linux
-
-      - name: 解决依赖冲突
-        run: |
-          sudo apt-get remove -y libunwind-dev || true
-          sudo apt-get update
-          sudo apt-get install -y libunwind-14-dev
       
       - name: 下载内核源码
         run: |
