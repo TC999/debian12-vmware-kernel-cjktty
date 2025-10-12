@@ -38,19 +38,11 @@ jobs:
       - name: 清理空间
         uses: rokibhasansagar/slimhub_actions@main
 
-      - name: 解决依赖冲突
-        continue-on-error: true
-        run: |
-          sudo apt-get remove -y libunwind-dev || true
-          sudo apt-get update
-          sudo apt-get install -y libunwind-14-dev
-
       - name: 安装依赖
         continue-on-error: true
         run: |
           sudo apt update
-          sudo apt install -y git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison dwarves zstd
-          sudo apt-get build-dep linux
+          sudo apt-get install build-essential libncurses-dev xz-utils libssl-dev flex libelf-dev bison fakeroot debhelper-compat=12 libdw-dev
 
       - name: 下载 linux 内核源码
         run: |
