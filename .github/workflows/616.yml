@@ -15,6 +15,9 @@ on:
         description: '是否清理'
         required: true
         type: boolean
+      deb:
+        description: '打包为deb'
+        type: boolean
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -63,16 +66,25 @@ jobs:
           wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-6.16.patch
           patch -Np1 < ./cjktty-6.16.patch
 
-      - name: 编译
+      - name: 编译 deb
+        if: ${{ inputs.deb }}
         run: |
           cd linux
           export ARCH=x86_64
           make -j$(nproc) deb-pkg
+      
+      - name: 编译
+        if: ${{ !inputs.deb }}
+        run: |
+          cd linux
+          export ARCH=x86_64
+          make -j$(nproc)
 
       #- name: 移动
       #  run: mv *.deb build/*.deb
 
       - name: 上传
+        if: ${{ inputs.deb }}
         uses: actions/upload-artifact@v4
         with:
           name: debian12-vmware-linux-cjktty
