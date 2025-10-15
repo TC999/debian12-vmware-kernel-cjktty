@@ -1,0 +1,100 @@
+name: 编译带中文补丁内核
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  #push:
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      clean:
+        description: '是否清理'
+        required: true
+        type: boolean
+        default: true
+      deb:
+        description: '打包为deb'
+        type: boolean
+        default: true
+     cjktty:
+        description: '中文补丁版本'
+        type: string
+        default: '6.9'
+     linux:
+        description: 'linux 版本'
+        required: true
+        default: '6.12.25'
+        type: string
+      config:
+        description: '配置文件'
+        required: true
+        default: 'config'
+        type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+    env:
+      LANG: zh_CN.UTF-8
+      LANGUAGE: zh_CN:zh
+      LC_ALL: zh_CN.UTF-8
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: 启用源码源
+        run: sudo mv sources.list /etc/apt/sources.list
+
+      - name: 汉化
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y language-pack-zh-hans
+
+      - name: 清理空间
+        if: ${{ inputs.clean }}
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: 安装依赖
+        continue-on-error: true
+        run: |
+          sudo apt update
+          sudo apt-get install build-essential libncurses-dev xz-utils libssl-dev flex libelf-dev bison fakeroot debhelper-compat=12 libdw-dev bc ccache pkg-config dpkg-dev gawk
+
+      - name: 下载 linux 内核源码
+        run: |
+            git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1 --single-branch -b ${{ inputs.linux }}
+
+      
+      - name: 移动配置文件
+        run: cp ${{ inputs.config }} linux/.config
+
+      - name: 中文补丁
+        run: |
+          cd linux
+          wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-${{ inputs.cjktty }}.patch
+          patch -Np1 < ./cjktty-${{ inputs.cjktty }}.patch
+
+      - name: 编译
+        run: |
+          cd linux
+          make -j$(nproc) bindeb-pkg
+
+      #- name: 移动
+      #  run: mv *.deb build/*.deb
+
+      - name: 上传
+        if: ${{ inputs.deb }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-cjktty-${{ inputs.linux }}
+          path: |
+            *.deb
