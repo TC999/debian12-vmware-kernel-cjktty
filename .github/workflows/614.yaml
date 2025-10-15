@@ -75,7 +75,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install build-essential libncurses-dev xz-utils libssl-dev flex libelf-dev bison fakeroot debhelper-compat=12 libdw-dev bc ccache pkg-config dpkg-dev
-          sudo apt-get install openssl=1.1.1
+          sudo apt-get install openssl=3.0.13-0ubuntu3.6
 
       - name: 下载 linux 内核源码
         run: |
