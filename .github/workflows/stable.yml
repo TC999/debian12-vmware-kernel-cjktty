@@ -2,13 +2,6 @@ name: 编译带中文补丁内核
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  #push:
-    #branches: [ "main" ]
-  #pull_request:
-    #branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       clean:
@@ -20,11 +13,11 @@ on:
         description: '打包为deb'
         type: boolean
         default: true
-     cjktty:
+      cjktty:
         description: '中文补丁版本'
         type: string
         default: '6.9'
-     linux:
+      linux:
         description: 'linux 版本'
         required: true
         default: '6.12.25'
@@ -32,7 +25,7 @@ on:
       config:
         description: '配置文件'
         required: true
-        default: 'config'
+        default: '612-config'
         type: string
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
