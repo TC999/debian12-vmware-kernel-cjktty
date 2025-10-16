@@ -86,9 +86,10 @@ jobs:
         #continue-on-error: true
         run: |
           cd linux
-          chmod a+x debian/rules
-          fakeroot debian/rules clean
-          fakeroot debian/rules binary
+          #chmod a+x debian/rules
+          #fakeroot debian/rules clean
+          #fakeroot debian/rules binary
+          make -j$(nproc) bindeb-pkg
 
       - name: 上传
         uses: actions/upload-artifact@v4
