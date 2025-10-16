@@ -1,6 +1,30 @@
-name: Ubuntu 25.04
+name: Ubuntu 中文补丁版内核
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      config:
+        description: '配置文件'
+        required: true
+        default: 'linuxmint-config'
+        type: string
+      clean:
+        description: '是否清理'
+        type: boolean
+      cjktty:
+        description: '中文补丁版本'
+        type: string
+        default: '6.9'
+      ubuntu:
+        description: 'ubuntu 代号'
+        default: 'noble'
+        required: true
+        type: string
+      linux:
+        description: 'linux 版本'
+        required: true
+        default: '6.12.25'
+        type: string
 
 jobs:
   build:
@@ -22,6 +46,7 @@ jobs:
           sudo apt-get install -y language-pack-zh-hans
       
       - name: 清理空间
+        if: ${{ inputs.clean }}
         uses: rokibhasansagar/slimhub_actions@main
 
       #- name: 安装依赖
@@ -37,36 +62,29 @@ jobs:
       #    sudo apt-get update
       #    sudo apt-get install -y libunwind-14-dev
 
-      - name: 解决依赖冲突
-        continue-on-error: true
-        run: |
-          sudo apt-get remove -y libunwind-dev || true
-          sudo apt-get update
-          sudo apt-get install -y libunwind-14-dev
-
       - name: 安装编译依赖
         continue-on-error: true
         run: |
           sudo apt update
-          sudo apt install fakeroot llvm libncurses-dev dwarves gawk flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf git debhelper
-          sudo apt build-dep linux
+          sudo apt build-dep linux -y
+          sudo apt install libncurses-dev pkg-config
       
       - name: 下载内核源码
         run: |
-          git clone https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble linux --depth=1 --single-banch
+          git clone https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/${{ inputs.ubuntu }} linux --depth=1 --single-branch -b ${{ inputs.linux }}
 
       - name: 打中文补丁
         run: |
           cd linux
-          wget https://raw.githubusercontent.com/andot/cjktty-patches/refs/heads/master/v6.x/cjktty-6.8.patch
-          patch -Np1 < cjktty*.patch
+          wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-${{ inputs.cjktty }}.patch
+          patch -Np1 < ./cjktty-${{ inputs.cjktty }}.patch
 
       - name: 移动配置文件
         run: |
-          mv noble-config linux/.config
+          mv ${{ inputs.config }} linux/.config
 
       - name: 编译
-        continue-on-error: true
+        #continue-on-error: true
         run: |
           cd linux
           chmod a+x debian/rules
@@ -76,6 +94,6 @@ jobs:
       - name: 上传
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-noble-cjktty
+          name: ubuntu-${{ inputs.ubuntu }}-${{ inputs.linux }}-cjktty
           path: |
             *.deb
