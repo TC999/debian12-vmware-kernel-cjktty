@@ -44,6 +44,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: 内核信息
+        run: |
+          echo "是否清理: ${{ inputs.clean }}"
+          echo "打包为deb: ${{ inputs.deb }}"
+          echo "内核版本: ${{ inputs.linux }}"
+          echo "配置文件: ${{ inputs.config }}"
+          echo "中文补丁版本: ${{ inputs.cjktty }}"
+
       - name: 启用源码源
         run: sudo mv sources.list /etc/apt/sources.list
 

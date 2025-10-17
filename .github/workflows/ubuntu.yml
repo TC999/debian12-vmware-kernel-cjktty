@@ -37,6 +37,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: 内核信息
+        run: |
+          echo "内核版本: ${{ inputs.linux }}"
+          echo "配置文件: ${{ inputs.config }}"
+          echo "Ubuntu 代号: ${{ inputs.ubuntu }}"
+          echo "中文补丁版本: ${{ inputs.cjktty }}"
+
       - name: 启用源码源
         run: sudo mv sources.list /etc/apt/sources.list
 
