@@ -42,8 +42,8 @@ jobs:
 
       - name: 安装工具
         run: |
-          sudo dnf -y groupinstall 'Development Tools'
-          sudo dnf -y install ncurses-devel openssl-devel elfutils-libelf-devel python3 perl rpm-build wget git
+          dnf -y groupinstall 'Development Tools'
+          dnf -y install ncurses-devel openssl-devel elfutils-libelf-devel python3 perl rpm-build wget git
 
       - name: 下载 linux 内核源码
         run: |
