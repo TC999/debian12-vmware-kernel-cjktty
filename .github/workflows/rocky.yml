@@ -43,7 +43,7 @@ jobs:
       - name: 安装工具
         run: |
           dnf -y groupinstall 'Development Tools'
-          dnf -y install ncurses-devel openssl-devel elfutils-libelf-devel python3 perl rpm-build wget git
+          dnf -y install ncurses-devel openssl-devel elfutils-libelf-devel python3 perl rpm-build wget git bc dwarves rsync
 
       - name: 下载 linux 内核源码
         run: |
@@ -67,3 +67,9 @@ jobs:
           git commit -m "cjktty"
           export ARCH=x86_64
           make -j$(nproc) binrpm-pkg
+
+      - name: 上传 rpm 包
+        uses: actions/upload-artifact@v4
+        with:
+          name: rocky-${{ inputs.linux }}-cjktty-${{ inputs.cjktty }}
+          path: linux/rpmbuild/RPMS/x86_64/*.rpm
