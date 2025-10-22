@@ -49,12 +49,17 @@ jobs:
         run: |
             git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1 --single-branch -b ${{ inputs.linux }}
 
-            - name: 移动配置文件
+      - name: 移动配置文件
         run: cp ${{ inputs.config }} linux/.config
 
       - name: 中文补丁
         run: |
           cd linux
+          git config --global user.email "actions@github.com"
+          git config --global user.name "actions-bot"
+          git add .
+          git commit -m "cjktty"
+          export ARCH=x86_64
           wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-${{ inputs.cjktty }}.patch
           patch -Np1 < ./cjktty-${{ inputs.cjktty }}.patch
 
