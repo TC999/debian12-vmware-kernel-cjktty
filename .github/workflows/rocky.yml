@@ -1,0 +1,64 @@
+name: Rocky Linux 中文补丁版内核
+
+on:
+  workflow_dispatch:
+     inputs:
+       config:
+         description: '配置文件'
+         required: true
+         default: 'rocky-config'
+         type: string
+       clean:
+         description: '是否清理'
+         type: boolean
+       cjktty:
+         description: '中文补丁版本'
+         type: string
+         default: '6.9'
+       linux:
+         description: 'linux 版本'
+         required: true
+         default: '6.12.25'
+         type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: rockylinux:10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 内核信息
+        run: |
+          echo "内核版本: ${{ inputs.linux }}"
+          echo "配置文件: ${{ inputs.config }}"
+          echo "中文补丁版本: ${{ inputs.cjktty }}"
+          echo "linux 版本: ${{ inputs.linux }}"
+
+      - name: 清理空间
+        if: ${{ inputs.clean }}
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: 安装工具
+        run: |
+          sudo dnf -y groupinstall 'Development Tools'
+          sudo dnf -y install ncurses-devel openssl-devel elfutils-libelf-devel python3 perl rpm-build wget git
+
+      - name: 下载 linux 内核源码
+        run: |
+            git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1 --single-branch -b ${{ inputs.linux }}
+
+            - name: 移动配置文件
+        run: cp ${{ inputs.config }} linux/.config
+
+      - name: 中文补丁
+        run: |
+          cd linux
+          wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-${{ inputs.cjktty }}.patch
+          patch -Np1 < ./cjktty-${{ inputs.cjktty }}.patch
+
+      - name: 编译
+        run: |
+          cd linux
+          make -j$(nproc) binrpm-pkg
