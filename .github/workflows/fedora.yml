@@ -1,0 +1,59 @@
+name: Fedora
+
+on:
+  workflow_dispatch:
+     inputs:
+       config:
+         description: '配置文件'
+         required: true
+         default: 'rocky-config'
+         type: string
+       clean:
+         description: '是否清理'
+         type: boolean
+       cjktty:
+         description: '中文补丁版本'
+         type: string
+         default: '6.9'
+       linux:
+         description: 'linux 版本'
+         required: true
+         default: 'v6.12'
+         type: string
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 内核信息
+      run: |
+        echo "内核版本: ${{ inputs.linux }}"
+        echo "配置文件: ${{ inputs.config }}"
+        echo "中文补丁版本: ${{ inputs.cjktty }}"
+        echo "linux 版本: ${{ inputs.linux }}"
+
+    - name: 清理空间
+      if: ${{ inputs.clean }}
+      uses: rokibhasansagar/slimhub_actions@main
+
+
+    - name: Build Kernel in Fedora Docker
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace fedora:latest bash -c "
+          dnf install -y @development-tools fedora-repos-archive fedpkg ncurses-devel git bc openssl-devel dwarves elfutils-libelf-devel bison flex
+          git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1 --single-branch -b ${{ inputs.linux }}
+          cd linux
+          # 中文补丁
+          wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v6.x/cjktty-${{ inputs.cjktty }}.patch
+          patch -Np1 < ./cjktty-${{ inputs.cjktty }}.patch
+          # 配置 && 编译
+          wget https://github.com/TC999/debian12-vmware-kernel-cjktty/raw/refs/heads/main/${{ inputs.config }} -O .config
+          make -j$(nproc) binrpm-pkg
+        "
+
+    - name: Upload RPM Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: kernel-rpm
+        path: rpmbuild/RPMS/**/*.rpm
