@@ -1,4 +1,4 @@
-name: 编译带中文补丁内核
+name: 编译 Linux7
 
 # Controls when the workflow will run
 on:
