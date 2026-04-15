@@ -13,6 +13,10 @@ on:
         description: '打包为deb'
         type: boolean
         default: true
+      cjktty:
+        description: '中文补丁版本'
+        type: string
+        default: '7.0'
       linux:
         description: 'linux 版本'
         required: true
@@ -73,6 +77,12 @@ jobs:
       - name: 移动配置文件
         run: cp ${{ inputs.config }} linux/.config
 
+      - name: 中文补丁
+        run: |
+          cd linux
+          wget https://raw.githubusercontent.com/bigshans/cjktty-patches/refs/heads/master/v7.x/cjktty-${{ inputs.cjktty }}.patch
+          patch -Np1 < ./cjktty-${{ inputs.cjktty }}.patch
+
       - name: 编译
         run: |
           cd linux
@@ -86,6 +96,6 @@ jobs:
         if: ${{ inputs.deb }}
         uses: actions/upload-artifact@v4
         with:
-          name: linux-${{ inputs.linux }}
+          name: linux-cjktty-${{ inputs.linux }}
           path: |
             *.deb
